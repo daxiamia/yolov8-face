@@ -50,7 +50,11 @@ class NAS:
 
     @smart_inference_mode()
     def _load(self, weights: str):
-        self.model = torch.load(weights)
+        try:
+            self.model = torch.load(weights, weights_only=False)
+        except Exception:
+            # Fallback for older PyTorch versions
+            self.model = torch.load(weights)
 
     @smart_inference_mode()
     def predict(self, source=None, stream=False, **kwargs):

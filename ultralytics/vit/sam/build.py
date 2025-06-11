@@ -129,7 +129,11 @@ def _build_sam(encoder_embed_dim,
     if checkpoint is not None:
         checkpoint = attempt_download_asset(checkpoint)
         with open(checkpoint, 'rb') as f:
-            state_dict = torch.load(f)
+            try:
+                state_dict = torch.load(f, weights_only=False)
+            except Exception:
+                # Fallback for older PyTorch versions
+                state_dict = torch.load(f)
         sam.load_state_dict(state_dict)
     sam.eval()
     # sam.load_state_dict(torch.load(checkpoint), strict=True)
